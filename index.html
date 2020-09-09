@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>web</title>
+	<script type="text/javascript" src="words.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<script type="text/javascript">
+		var timer,
+			timeLimit = 60,
+			score = 0,
+			inGame = false,
+			currentWord = "";
+
+		function change() {
+			var select = document.getElementById("complexity");
+			timeLimit = select.value;
+		}
+
+		function start() {
+			inGame = true;
+
+			let timerNode = document.getElementById("timer"),
+				scoreNode = document.getElementById("score"),
+				wordNode = document.getElementById("currentWord"),
+				but = document.getElementById("but");
+
+			but.disabled = true;
+
+			timer = setInterval(() => {
+				timerNode.innerText = timeLimit;
+				timeLimit--;
+				if (timeLimit <= 0) {
+					alert("Ваш счёт: " + score);
+
+					timerNode.innerText = 60;
+					scoreNode.innerText = 0;
+					timeLimit = 60;
+					score = 0;
+
+					but.disabled = false;
+					inGame = false;
+					clearTimeout(timer);
+				}
+			}, 1000)
+
+			currentWord = getRandomWord();
+			wordNode.innerText = currentWord;
+		}
+
+		function checkInput() {
+			if (!inGame) return false;
+
+			let val = document.getElementById("val_inp").value,
+				scoreNode = document.getElementById("score"),
+				wordNode = document.getElementById("currentWord");
+
+			if (val == currentWord) {
+				score++;
+				scoreNode.innerText = score;
+
+				currentWord = getRandomWord();
+				wordNode.innerText = currentWord;
+
+				document.getElementById("val_inp").value = "";
+			}
+		}
+
+		function getRandomWord() {
+			let idx = parseInt(Math.random() * words.length)
+			return words[idx];
+		}
+	</script>
+	<div id="trainer", class = "posion">
+		<div id="header",class = "bld">
+			<span id="score"></span>
+			<span id="timer"></span>
+		</div>
+		<div id="currentWord"></div>
+		<input type="text" id="val_inp" onchange="checkInput()">
+		<select id="complexity" onchange="change()">
+			<option value=''>Выбери сложность</option>
+			<option value="90">Легко</option>
+			<option value="60">Обычно</option>
+			<option value="30">Сложно</option>
+		</select>
+		<button onclick="start()" id="but",class = "bld">Начать</button>
+	</div>
+</body>
+</html>
